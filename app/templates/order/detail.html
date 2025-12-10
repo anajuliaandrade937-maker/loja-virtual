@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Pedido #{{ order.id }} - LojaVirtual{% endblock %}
+
+{% block content %}
+<div class="order-detail-page">
+    <div class="order-detail-header">
+        <h1>Pedido #{{ order.id }}</h1>
+        <span class="badge badge-{% if order.status == 'CONFIRMADO' %}success{% elif order.status == 'ENVIADO' %}info{% elif order.status == 'ENTREGUE' %}success{% else %}warning{% endif %}">
+            {{ order.status }}
+        </span>
+    </div>
+    
+    <div class="order-detail-info">
+        <div class="info-section">
+            <h2>Informações do Pedido</h2>
+            <p><strong>Data:</strong> {{ order.criado_em.strftime('%d/%m/%Y %H:%M') }}</p>
+            <p><strong>Cliente:</strong> {{ order.usuario.nome }}</p>
+            <p><strong>Email:</strong> {{ order.usuario.email }}</p>
+        </div>
+        
+        <div class="info-section">
+            <h2>Itens do Pedido</h2>
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unitário</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.itens %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('catalog.product_detail', product_id=item.produto.id) }}">
+                                    {{ item.produto.nome }}
+                                </a>
+                            </td>
+                            <td>{{ item.quantidade }}</td>
+                            <td>R$ {{ "%.2f"|format(item.preco) }}</td>
+                            <td>R$ {{ "%.2f"|format(item.quantidade * item.preco) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="order-total-section">
+            <h2>Resumo Financeiro</h2>
+            <div class="total-line">
+                <span>Subtotal:</span>
+                <span>R$ {{ "%.2f"|format(order.total) }}</span>
+            </div>
+            <div class="total-line">
+                <span>Frete:</span>
+                <span>Grátis</span>
+            </div>
+            <div class="total-line final">
+                <strong>Total da Compra:</strong>
+                <strong>R$ {{ "%.2f"|format(order.total) }}</strong>
+            </div>
+        </div>
+    </div>
+    
+    <div class="order-actions">
+        <a href="{{ url_for('order.list_orders') }}" class="btn btn-secondary">← Voltar aos Pedidos</a>
+    </div>
+</div>
+{% endblock %}

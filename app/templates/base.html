@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Loja Virtual{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="{{ url_for('main.home') }}" class="logo">🛍️ LojaVirtual</a>
+            </div>
+            <ul class="navbar-menu">
+                <li><a href="{{ url_for('catalog.index') }}">Catálogo</a></li>
+                <li><a href="{{ url_for('catalog.search') }}?q=">Buscar</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('cart.view') }}">Carrinho</a></li>
+                    <li><a href="{{ url_for('order.list_orders') }}">Meus Pedidos</a></li>
+                    <li><a href="{{ url_for('auth.logout') }}">Sair</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                    <li><a href="{{ url_for('auth.register') }}">Registrar</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Mensagens Flash -->
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                        <button type="button" class="btn-close">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 LojaVirtual. Todos os direitos reservados.</p>
+            <p>Desenvolvido com ❤️ em Flask</p>
+        </div>
+    </footer>
+
+    <script>
+        // Fechar alertas ao clicar em X
+        document.querySelectorAll('.btn-close').forEach(btn => {
+            btn.addEventListener('click', () => btn.parentElement.remove());
+        });
+    </script>
+</body>
+</html>

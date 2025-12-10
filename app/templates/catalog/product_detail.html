@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.nome }} - LojaVirtual{% endblock %}
+
+{% block content %}
+<div class="product-detail">
+    <div class="product-detail-container">
+        <div class="product-detail-image">
+            {% if product.imagem %}
+                <img src="{{ product.imagem }}" alt="{{ product.nome }}">
+            {% else %}
+                <div class="placeholder-image large">📦</div>
+            {% endif %}
+        </div>
+        
+        <div class="product-detail-info">
+            <h1>{{ product.nome }}</h1>
+            
+            <div class="rating">
+                <span class="stars">
+                    {% if avg_rating %}
+                        {{ "⭐" * avg_rating }}
+                    {% else %}
+                        Sem avaliações
+                    {% endif %}
+                </span>
+                <span class="rating-value">{{ avg_rating }}/5</span>
+            </div>
+            
+            <p class="description">{{ product.descricao }}</p>
+            
+            <div class="price-stock">
+                <h2 class="price">R$ {{ "%.2f"|format(product.preco) }}</h2>
+                <p class="stock">
+                    {% if product.estoque > 0 %}
+                        <span class="badge badge-success">{{ product.estoque }} em estoque</span>
+                    {% else %}
+                        <span class="badge badge-danger">Fora de Estoque</span>
+                    {% endif %}
+                </p>
+            </div>
+            
+            {% if current_user.is_authenticated and product.estoque > 0 %}
+                <form method="POST" action="{{ url_for('cart.add_item', product_id=product.id) }}" class="add-to-cart-form">
+                    <div class="form-group">
+                        <label for="quantidade">Quantidade:</label>
+                        <input type="number" id="quantidade" name="quantidade" value="1" min="1" max="{{ product.estoque }}" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">🛒 Adicionar ao Carrinho</button>
+                </form>
+            {% elif not current_user.is_authenticated %}
+                <p class="info">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">Faça login para comprar</a>
+                </p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Avaliações -->
+    <section class="reviews-section">
+        <h2>Avaliações dos Clientes</h2>
+        
+        {% if current_user.is_authenticated %}
+            <div class="review-form">
+                <h3>Deixe sua avaliação</h3>
+                <form method="POST" action="{{ url_for('review.add_review', product_id=product.id) }}">
+                    <div class="form-group">
+                        <label for="rating">Classificação:</label>
+                        <select id="rating" name="rating" class="form-control" required>
+                            <option value="">-- Selecione --</option>
+                            <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+                            <option value="4">⭐⭐⭐⭐ Muito Bom</option>
+                            <option value="3">⭐⭐⭐ Bom</option>
+                            <option value="2">⭐⭐ Razoável</option>
+                            <option value="1">⭐ Ruim</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="comentario">Comentário (opcional):</label>
+                        <textarea id="comentario" name="comentario" class="form-control" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
+                </form>
+            </div>
+        {% else %}
+            <p><a href="{{ url_for('auth.login') }}">Faça login</a> para deixar uma avaliação.</p>
+        {% endif %}
+        
+        <div class="reviews-list">
+            {% for review in reviews %}
+                <div class="review-item">
+                    <div class="review-header">
+                        <span class="review-author">{{ review.usuario.nome }}</span>
+                        <span class="review-rating">{{ "⭐" * review.rating }}</span>
+                    </div>
+                    {% if review.comentario %}
+                        <p class="review-comment">{{ review.comentario }}</p>
+                    {% endif %}
+                    <small class="review-date">{{ review.criado_em.strftime('%d/%m/%Y %H:%M') }}</small>
+                </div>
+            {% else %}
+                <p class="no-reviews">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+{% endblock %}

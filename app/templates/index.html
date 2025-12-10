@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}LojaVirtual - Home{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Bem-vindo à LojaVirtual</h1>
+    <p>Descubra produtos incríveis com as melhores ofertas</p>
+    <a href="{{ url_for('catalog.index') }}" class="btn btn-primary btn-lg">
+        Explorar Catálogo
+    </a>
+</div>
+
+<section class="featured-products">
+    <h2>Produtos em Destaque</h2>
+    <div class="products-grid">
+        {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.imagem %}
+                        <img src="{{ product.imagem }}" alt="{{ product.nome }}">
+                    {% else %}
+                        <div class="placeholder-image">📦</div>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3>{{ product.nome }}</h3>
+                    <p class="product-price">R$ {{ "%.2f"|format(product.preco) }}</p>
+                    <p class="product-stock">
+                        {% if product.estoque > 0 %}
+                            <span class="badge badge-success">Em Estoque</span>
+                        {% else %}
+                            <span class="badge badge-danger">Fora de Estoque</span>
+                        {% endif %}
+                    </p>
+                    <a href="{{ url_for('catalog.product_detail', product_id=product.id) }}" 
+                       class="btn btn-sm btn-outline">
+                        Ver Detalhes
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="why-us">
+    <h2>Por que Escolher a LojaVirtual?</h2>
+    <div class="features">
+        <div class="feature">
+            <div class="icon">🚚</div>
+            <h3>Entrega Rápida</h3>
+            <p>Frete grátis em compras acima de R$ 100</p>
+        </div>
+        <div class="feature">
+            <div class="icon">💳</div>
+            <h3>Pagamento Seguro</h3>
+            <p>Múltiplas formas de pagamento</p>
+        </div>
+        <div class="feature">
+            <div class="icon">⭐</div>
+            <h3>Avaliações Verificadas</h3>
+            <p>Conheça as experiências de outros clientes</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

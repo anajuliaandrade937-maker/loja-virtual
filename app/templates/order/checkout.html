@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - LojaVirtual{% endblock %}
+
+{% block content %}
+<div class="checkout-page">
+    <h1>💳 Checkout</h1>
+    
+    <div class="checkout-container">
+        <div class="checkout-items">
+            <h2>Itens do Pedido</h2>
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Preço</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>{{ item.produto.nome }}</td>
+                            <td>{{ item.quantidade }}</td>
+                            <td>R$ {{ "%.2f"|format(item.produto.preco) }}</td>
+                            <td>R$ {{ "%.2f"|format(item.subtotal()) }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="checkout-form">
+            <form method="POST" action="{{ url_for('order.confirm') }}">
+                <h2>Informações de Entrega</h2>
+                
+                <div class="form-group">
+                    <label>Nome:</label>
+                    <input type="text" value="{{ current_user.nome }}" class="form-control" disabled>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Endereço:</label>
+                    <input type="text" id="address" name="address" class="form-control" required placeholder="Rua, número">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">Cidade:</label>
+                        <input type="text" id="city" name="city" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="state">Estado:</label>
+                        <input type="text" id="state" name="state" class="form-control" required placeholder="SP">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="zip">CEP:</label>
+                    <input type="text" id="zip" name="zip" class="form-control" required placeholder="12345-678">
+                </div>
+                
+                <h2>Método de Entrega</h2>
+                <div class="shipping-options">
+                    {% for method, info in shipping_methods.items() %}
+                        <div class="shipping-option">
+                            <input type="radio" id="{{ method }}" name="shipping" value="{{ method }}" required>
+                            <label for="{{ method }}">
+                                <strong>{{ info.name }}</strong>
+                                <span class="shipping-days">{{ info.days }} dias úteis</span>
+                                <span class="shipping-price">{{ info.price }}</span>
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <h2>Método de Pagamento</h2>
+                <div class="payment-options">
+                    <div class="payment-option">
+                        <input type="radio" id="card" name="payment" value="card" checked required>
+                        <label for="card">💳 Cartão de Crédito</label>
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" id="pix" name="payment" value="pix" required>
+                        <label for="pix">📱 PIX</label>
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" id="boleto" name="payment" value="boleto" required>
+                        <label for="boleto">📄 Boleto</label>
+                    </div>
+                </div>
+                
+                <div class="order-summary">
+                    <h3>Resumo do Pedido</h3>
+                    <div class="summary-line">
+                        <span>Subtotal:</span>
+                        <span>R$ {{ "%.2f"|format(subtotal) }}</span>
+                    </div>
+                    <div class="summary-line total">
+                        <span>Total:</span>
+                        <span>R$ {{ "%.2f"|format(subtotal) }}</span>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{{ url_for('cart.view') }}" class="btn btn-secondary">Voltar</a>
+                    <button type="submit" class="btn btn-primary btn-lg">✓ Confirmar Pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
