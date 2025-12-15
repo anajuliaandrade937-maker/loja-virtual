@@ -17,6 +17,17 @@ def create_app():
     
     # Registrar blueprints - lazy para evitar circular import
     with app.app_context():
+        # Importar todos os modelos aqui para garantir que o SQLAlchemy registre
+        # todos os mappers e resolva relacionamentos nomeados (Review, Order, etc.)
+        # antes de qualquer query ser executada pelas rotas. Use importlib to avoid
+        # sobrescrever a variável local `app` (que é a instância Flask).
+        import importlib
+        importlib.import_module('app.models.user')
+        importlib.import_module('app.models.product')
+        importlib.import_module('app.models.order')
+        importlib.import_module('app.models.order_item')
+        importlib.import_module('app.models.cart_item')
+        importlib.import_module('app.models.review')
         from app.routes.main import register_blueprints
         register_blueprints(app)
     
