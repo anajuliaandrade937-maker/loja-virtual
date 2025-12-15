@@ -295,3 +295,9 @@ def register_blueprints(app):
     app.register_blueprint(cart_bp)
     app.register_blueprint(order_bp)
     app.register_blueprint(review_bp)
+
+
+@main_bp.route('/info')
+def info():
+    """Página de informações do projeto"""
+    return render_template('info.html')

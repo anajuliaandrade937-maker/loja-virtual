@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Informações do Projeto{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Sobre a Loja Virtual</h1>
+  <p>Esta página apresenta um resumo do projeto, tecnologias utilizadas e instruções para rodar a aplicação localmente.</p>
+  <h2>Funcionalidades</h2>
+  <ul>
+    <li>Catálogo de produtos com busca e paginação</li>
+    <li>Carrinho de compras</li>
+    <li>Checkout e pedidos</li>
+    <li>Avaliações de produtos</li>
+    <li>Autenticação de usuários</li>
+  </ul>
+
+  <h2>Como rodar</h2>
+  <ol>
+    <li>Ative o ambiente virtual</li>
+    <li>Instale as dependências: <code>pip install -r requirements.txt</code></li>
+    <li>Popule o banco: <code>python populate_db.py</code></li>
+    <li>Inicie o servidor: <code>python run.py</code></li>
+  </ol>
+</div>
+{% endblock %}
